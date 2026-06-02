@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api/v1")
 
 @router.get("/health", tags=["system"])
 async def health() -> dict[str, str]:
-    return {"status": "ok"}
+    return {"status": "сломався"}
 
 
 @router.get("/health/realtime", tags=["system"])
