@@ -14,6 +14,7 @@ build/
 *.egg
 
 # Logs 
+# С скрытымы логами из-за шаблонного .gitignore было правда очень не приятно
 backend/logs/
 
 # Tools
