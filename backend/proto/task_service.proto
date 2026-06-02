@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package task.v1;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+message HealthResponse {
+  string status = 1;
+}
+
+message Project {
+  string id = 1;
+  string slug = 2;
+  string name = 3;
+  string description = 4;
+  string created_by = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message ProjectListResponse {
+  repeated Project items = 1;
+  int32 total = 2;
+}
+
+message Task {
+  string id = 1;
+  string project_id = 2;
+  string parent_task_id = 3;
+  string title = 4;
+  string description = 5;
+  string assignee = 6;
+  string status = 7;
+  string priority = 8;
+  google.protobuf.Timestamp start_at = 9;
+  google.protobuf.Timestamp end_at = 10;
+  repeated string tags = 11;
+  google.protobuf.Timestamp created_at = 12;
+  google.protobuf.Timestamp updated_at = 13;
+}
+
+message ListTasksRequest {
+  string project_id = 1;
+  string parent_task_id = 2;
+  bool root_only = 3;
+  bool leaves_only = 4;
+  string status = 5;
+  string assignee = 6;
+  string priority = 7;
+  string q = 8;
+  string tag = 9;
+  string sort_by = 10;
+  string sort_order = 11;
+  int32 page = 12;
+  int32 page_size = 13;
+}
+
+message ListTasksResponse {
+  repeated Task items = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+  int32 pages = 5;
+}
+
+message CreateTaskRequest {
+  string project_id = 1;
+  string title = 2;
+  string assignee = 3;
+  string parent_task_id = 4;
+  string description = 5;
+  string priority = 6;
+  google.protobuf.Timestamp start_at = 7;
+  google.protobuf.Timestamp end_at = 8;
+  repeated string tags = 9;
+}
+
+service SystemService {
+  rpc Health(google.protobuf.Empty) returns (HealthResponse);
+}
+
+service ProjectService {
+  rpc ListProjects(google.protobuf.Empty) returns (ProjectListResponse);
+}
+
+service TaskService {
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse);
+  rpc CreateTask(CreateTaskRequest) returns (Task);
+}
