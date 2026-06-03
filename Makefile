@@ -46,10 +46,10 @@ migrate:
 	cd $(COMPOSE) && docker compose $(COMPOSE_DEV) run --rm --entrypoint "" api alembic upgrade head
 
 test:
-	$(DC_RUN_API) api pytest -q
+	$(DC_RUN_API) api uv run pytest -q
 
 lint:
-	$(DC_RUN_API) api ruff check .
+	$(DC_RUN_API) api uv run ruff check .
 
 ci: lint test
 
