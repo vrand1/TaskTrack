@@ -10,9 +10,9 @@ from app.cache import redis_client
 from app.core.security import hash_password
 from app.db.base import Base
 from app.db.session import get_session
-from app.domains.tasks.constants import TASK_PRIORITIES, TASK_STATUSES
+from app.domains.tasks.domain.constants import TASK_PRIORITIES, TASK_STATUSES
+from app.domains.tasks.domain.refs import init_task_ref_registry, reset_task_ref_registry_for_tests
 from app.domains.tasks.models import Task, TaskEvent, TaskPriorityRef, TaskStatusRef  # noqa: F401
-from app.domains.tasks.refs import init_task_ref_registry, reset_task_ref_registry_for_tests
 from app.domains.users.model import User
 from app.main import app
 from tests.users import TEST_PASSWORD, AdminUser, NormalUser, TestUser

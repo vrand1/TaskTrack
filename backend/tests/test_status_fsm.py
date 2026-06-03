@@ -1,8 +1,8 @@
 import pytest
 
 from app.core.exceptions import InvalidStatusTransitionError
-from app.domains.tasks.constants import TASK_STATUSES
-from app.domains.tasks.fsm import validate_status_transition
+from app.domains.tasks.domain.constants import TASK_STATUSES
+from app.domains.tasks.domain.fsm import validate_status_transition
 
 ORDERED = list(TASK_STATUSES)
 

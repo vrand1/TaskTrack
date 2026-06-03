@@ -2,7 +2,7 @@ import pytest
 from fakeredis.aioredis import FakeRedis
 
 from app.cache.task_list import TaskListCache, build_list_cache_key
-from app.domains.tasks.list_params import TaskListParams
+from app.domains.tasks.params.list import TaskListParams
 from app.domains.tasks.schemas import TaskListResponse
 from tests.users import AdminUser, NormalUser
 

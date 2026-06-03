@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from app.cache.redis_client import close_redis, init_redis
 from app.core.config import settings
 from app.db.session import async_session_factory, engine
-from app.domains.tasks.refs import init_task_ref_registry
+from app.domains.tasks.domain.refs import init_task_ref_registry
 from app.grpc import GrpcServer
 from app.jobs.purge_soft_deleted import purge_expired_soft_deleted, run_purge_worker
 

@@ -1,9 +1,9 @@
 import pytest
 
 from app.core.exceptions import InvalidStatusTransitionError
-from app.domains.tasks.constants import TASK_PRIORITIES, TASK_STATUSES
-from app.domains.tasks.fsm import validate_status_transition
-from app.domains.tasks.refs import PriorityRef, StatusRef, TaskRefRegistry
+from app.domains.tasks.domain.constants import TASK_PRIORITIES, TASK_STATUSES
+from app.domains.tasks.domain.fsm import validate_status_transition
+from app.domains.tasks.domain.refs import PriorityRef, StatusRef, TaskRefRegistry
 
 
 def _default_registry() -> TaskRefRegistry:

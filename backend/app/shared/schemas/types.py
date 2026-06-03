@@ -2,7 +2,7 @@ from typing import Annotated
 
 from pydantic import AfterValidator, EmailStr, Field, StringConstraints
 
-from app.domains.tasks.constants import TASK_EVENT_TYPES, TASK_PRIORITIES, TASK_STATUSES
+from app.domains.tasks.domain.constants import TASK_EVENT_TYPES, TASK_PRIORITIES, TASK_STATUSES
 
 TitleStr = Annotated[
     str,

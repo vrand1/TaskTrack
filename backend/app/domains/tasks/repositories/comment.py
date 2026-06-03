@@ -4,8 +4,8 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.domains.tasks.comment_params import TaskCommentListParams
 from app.domains.tasks.models import TaskComment
+from app.domains.tasks.params.comment import TaskCommentListParams
 
 
 class TaskCommentRepository:

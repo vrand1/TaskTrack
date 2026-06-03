@@ -13,13 +13,13 @@ from app.db.session import async_session_factory
 from app.domains.auth.providers.factory import build_user_store
 from app.domains.projects.repository import ProjectRepository
 from app.domains.projects.service import ProjectService
-from app.domains.tasks.comment_repository import TaskCommentRepository
-from app.domains.tasks.history import TaskHistoryRecorder, TaskHistoryRepository
-from app.domains.tasks.list_params import TaskListParams
-from app.domains.tasks.refs import get_task_ref_registry
-from app.domains.tasks.repository import TaskRepository
+from app.domains.tasks.domain.history import TaskHistoryRecorder, TaskHistoryRepository
+from app.domains.tasks.domain.refs import get_task_ref_registry
+from app.domains.tasks.params.list import TaskListParams
+from app.domains.tasks.repositories.comment import TaskCommentRepository
+from app.domains.tasks.repositories.task import TaskRepository
 from app.domains.tasks.schemas import TaskCreate
-from app.domains.tasks.service import TaskService
+from app.domains.tasks.services.task import TaskService
 
 from . import auth
 from .generated import task_service_pb2 as pb2

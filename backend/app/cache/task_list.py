@@ -1,7 +1,7 @@
 from redis.asyncio import Redis
 
 from app.core.config import settings
-from app.domains.tasks.list_params import TaskListParams
+from app.domains.tasks.params.list import TaskListParams
 from app.domains.tasks.schemas import TaskListResponse
 
 LIST_KEY_PREFIX = "tasks:list:"

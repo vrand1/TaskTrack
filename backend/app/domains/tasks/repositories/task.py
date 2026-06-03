@@ -9,10 +9,10 @@ from app.core.config import settings
 from app.core.datetime_utils import ensure_utc
 from app.core.exceptions import RestoreExpiredError, TaskNotFoundError
 from app.domains.projects.model import Project
-from app.domains.tasks.list_params import TaskListParams
+from app.domains.tasks.domain.refs import TaskRefRegistry
 from app.domains.tasks.models import Tag, Task, TaskTag
-from app.domains.tasks.refs import TaskRefRegistry
-from app.domains.tasks.tag_list_params import TagListParams
+from app.domains.tasks.params.list import TaskListParams
+from app.domains.tasks.params.tag_list import TagListParams
 from app.domains.users.model import User
 
 TASK_LOAD = (

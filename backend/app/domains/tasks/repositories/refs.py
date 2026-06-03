@@ -2,8 +2,8 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.domains.tasks.domain.refs import PriorityRef, StatusRef
 from app.domains.tasks.models import TaskPriorityRef, TaskStatusRef
-from app.domains.tasks.refs import PriorityRef, StatusRef
 
 
 class TaskRefRepository:

@@ -6,7 +6,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.domains.tasks.constants import (
+from app.domains.tasks.domain.constants import (
     EVENT_COMMENT_ADDED,
     EVENT_CREATED,
     EVENT_DELETED,
@@ -14,8 +14,8 @@ from app.domains.tasks.constants import (
     EVENT_STATUS_CHANGED,
     EVENT_UPDATED,
 )
-from app.domains.tasks.history_params import TaskHistoryListParams
 from app.domains.tasks.models import Task, TaskEvent
+from app.domains.tasks.params.history import TaskHistoryListParams
 from app.domains.users.model import User
 
 

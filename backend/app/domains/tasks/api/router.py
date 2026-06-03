@@ -6,10 +6,10 @@ from fastapi import APIRouter, Depends, Header, Query, Response, status
 
 from app.core.idempotency import IdempotencyServiceDep, request_body_hash
 from app.domains.auth.dependencies import CurrentUserDep
-from app.domains.tasks.comment_params import TaskCommentListParams
-from app.domains.tasks.dependencies import TaskServiceDep
-from app.domains.tasks.history_params import TaskHistoryListParams
-from app.domains.tasks.list_params import TaskListParams
+from app.domains.tasks.api.dependencies import TaskServiceDep
+from app.domains.tasks.params.comment import TaskCommentListParams
+from app.domains.tasks.params.history import TaskHistoryListParams
+from app.domains.tasks.params.list import TaskListParams
 from app.domains.tasks.schemas import (
     TaskCommentCreate,
     TaskCommentFilterParams,

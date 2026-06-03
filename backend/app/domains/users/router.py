@@ -4,9 +4,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
 from app.domains.auth.dependencies import AdminUserDep, CurrentUserDep, UserStoreDep
-from app.domains.tasks.dependencies import TaskServiceDep
-from app.domains.tasks.list_params import TaskListParams
-from app.domains.tasks.router import list_query_params
+from app.domains.tasks.api.dependencies import TaskServiceDep
+from app.domains.tasks.api.router import list_query_params
+from app.domains.tasks.params.list import TaskListParams
 from app.domains.tasks.schemas import TaskListResponse
 from app.domains.users.dependencies import UserServiceDep
 from app.domains.users.schemas import (

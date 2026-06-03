@@ -96,7 +96,7 @@ def get_task_ref_registry() -> TaskRefRegistry:
 
 
 async def init_task_ref_registry(session: AsyncSession) -> TaskRefRegistry:
-    from app.domains.tasks.ref_repository import TaskRefRepository
+    from app.domains.tasks.repositories.refs import TaskRefRepository
 
     global _registry
     loader = TaskRefRepository(session)

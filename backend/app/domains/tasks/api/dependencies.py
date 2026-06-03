@@ -7,11 +7,11 @@ from app.cache.redis_client import get_redis
 from app.cache.task_list import TaskListCache
 from app.domains.auth.dependencies import UserStoreDep
 from app.domains.projects.repository import ProjectRepository
-from app.domains.tasks.comment_repository import TaskCommentRepository
-from app.domains.tasks.history import TaskHistoryRecorder, TaskHistoryRepository
-from app.domains.tasks.refs import get_task_ref_registry
-from app.domains.tasks.repository import TaskRepository
-from app.domains.tasks.service import TaskService
+from app.domains.tasks.domain.history import TaskHistoryRecorder, TaskHistoryRepository
+from app.domains.tasks.domain.refs import get_task_ref_registry
+from app.domains.tasks.repositories.comment import TaskCommentRepository
+from app.domains.tasks.repositories.task import TaskRepository
+from app.domains.tasks.services.task import TaskService
 
 
 def get_task_list_cache() -> TaskListCache:

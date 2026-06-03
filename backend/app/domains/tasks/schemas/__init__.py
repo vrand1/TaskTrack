@@ -6,16 +6,16 @@ from typing import Annotated, Any, Literal, Self
 from pydantic import ConfigDict, Field, StringConstraints, field_validator, model_validator
 
 from app.core.config import settings
-from app.domains.tasks.comment_params import TaskCommentListParams
-from app.domains.tasks.constants import DEFAULT_TASK_PRIORITY
-from app.domains.tasks.history_params import TaskHistoryListParams
-from app.domains.tasks.list_params import TaskListParams
+from app.domains.tasks.domain.constants import DEFAULT_TASK_PRIORITY
+from app.domains.tasks.domain.refs import TaskRefRegistry
 from app.domains.tasks.models import Task
 from app.domains.tasks.models.comment import TaskComment
 from app.domains.tasks.models.event import TaskEvent
 from app.domains.tasks.models.tag import Tag
-from app.domains.tasks.refs import TaskRefRegistry
-from app.domains.tasks.tag_list_params import TagListParams
+from app.domains.tasks.params.comment import TaskCommentListParams
+from app.domains.tasks.params.history import TaskHistoryListParams
+from app.domains.tasks.params.list import TaskListParams
+from app.domains.tasks.params.tag_list import TagListParams
 from app.shared.schemas.base import APIModel
 from app.shared.schemas.types import (
     AssigneeEmailStr,
