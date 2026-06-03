@@ -20,11 +20,11 @@ from app.domains.tasks.schemas import (
     TaskHistoryFilterParams,
     TaskHistoryResponse,
     TaskListResponse,
-    TaskPaginationParams,
     TaskRead,
     TaskStatusUpdate,
     TaskUpdate,
 )
+from app.shared.schemas.pagination import PaginationParams
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
@@ -40,7 +40,7 @@ IdempotencyKeyHeader = Annotated[
 
 def list_query_params(
     filters: Annotated[TaskFilterParams, Depends()],
-    pagination: Annotated[TaskPaginationParams, Depends()],
+    pagination: Annotated[PaginationParams, Depends()],
 ) -> TaskListParams:
     return filters.to_list_params(pagination)
 
@@ -48,7 +48,7 @@ def list_query_params(
 def history_query_params(
     task_id: uuid.UUID,
     filters: Annotated[TaskHistoryFilterParams, Depends()],
-    pagination: Annotated[TaskPaginationParams, Depends()],
+    pagination: Annotated[PaginationParams, Depends()],
 ) -> TaskHistoryListParams:
     return filters.to_list_params(task_id, pagination)
 
@@ -56,7 +56,7 @@ def history_query_params(
 def comment_query_params(
     task_id: uuid.UUID,
     filters: Annotated[TaskCommentFilterParams, Depends()],
-    pagination: Annotated[TaskPaginationParams, Depends()],
+    pagination: Annotated[PaginationParams, Depends()],
 ) -> TaskCommentListParams:
     return filters.to_list_params(task_id, pagination)
 

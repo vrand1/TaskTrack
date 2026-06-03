@@ -9,10 +9,10 @@ from app.domains.projects.dependencies import ProjectServiceDep
 from app.domains.projects.schemas import (
     ProjectCreate,
     ProjectListResponse,
-    ProjectPaginationParams,
     ProjectRead,
     ProjectUpdate,
 )
+from app.shared.schemas.pagination import PaginationParams
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
@@ -50,7 +50,7 @@ async def create_project(
 async def list_projects(
     service: ProjectServiceDep,
     _: CurrentUserDep,
-    pagination: Annotated[ProjectPaginationParams, Depends()],
+    pagination: Annotated[PaginationParams, Depends()],
 ) -> ProjectListResponse:
     return await service.list_projects(pagination)
 

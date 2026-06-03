@@ -42,8 +42,18 @@ class Settings(BaseSettings):
         ge=1,
         description="TTL кэша списка задач, сек.",
     )
-    tasks_default_page_size: int = Field(default=20, ge=1, le=100)
-    tasks_max_page_size: int = Field(default=100, ge=1, le=500)
+    default_page_size: int = Field(
+        default=20,
+        ge=1,
+        le=100,
+        description="Размер страницы по умолчанию для списков API.",
+    )
+    max_page_size: int = Field(
+        default=100,
+        ge=1,
+        le=500,
+        description="Максимальный допустимый page_size в query.",
+    )
 
     soft_delete_retention_days: int = Field(
         default=30,

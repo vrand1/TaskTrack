@@ -9,6 +9,7 @@ from app.core.config import settings
 from app.core.datetime_utils import ensure_utc
 from app.core.exceptions import ProjectNotFoundError, ProjectSlugTakenError, RestoreExpiredError
 from app.domains.projects.model import Project
+from app.shared.query.pagination import OffsetPagination
 
 PROJECT_LOAD = (selectinload(Project.created_by),)
 
@@ -56,14 +57,14 @@ class ProjectRepository:
         count = await self._session.scalar(query)
         return bool(count)
 
-    async def list_active(self, *, page: int, page_size: int) -> tuple[list[Project], int]:
+    async def list_active(self, params: OffsetPagination) -> tuple[list[Project], int]:
         query = (
             select(Project)
             .options(*PROJECT_LOAD)
             .where(Project.deleted_at.is_(None))
             .order_by(Project.created_at.desc())
-            .offset((page - 1) * page_size)
-            .limit(page_size)
+            .offset(params.offset)
+            .limit(params.page_size)
         )
         count_query = select(func.count()).select_from(Project).where(Project.deleted_at.is_(None))
         total = await self._session.scalar(count_query) or 0

@@ -128,7 +128,7 @@ class TaskRepository:
     async def list_children(self, parent_task_id: uuid.UUID) -> list[Task]:
         params = TaskListParams(
             parent_task_id=parent_task_id,
-            page_size=settings.tasks_max_page_size,
+            page_size=settings.max_page_size,
         )
         tasks, _ = await self.list_active(params)
         return tasks

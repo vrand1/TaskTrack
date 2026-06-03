@@ -6,12 +6,12 @@ from app.domains.projects.repository import ProjectRepository
 from app.domains.projects.schemas import (
     ProjectCreate,
     ProjectListResponse,
-    ProjectPaginationParams,
     ProjectRead,
     ProjectUpdate,
 )
 from app.domains.projects.utils import slugify
 from app.domains.users.model import User
+from app.shared.schemas.pagination import PaginationParams
 
 
 class ProjectService:
@@ -34,11 +34,8 @@ class ProjectService:
     async def get_by_id(self, project_id: uuid.UUID) -> Project:
         return await self._repository.get_active_by_id(project_id)
 
-    async def list_projects(self, pagination: ProjectPaginationParams) -> ProjectListResponse:
-        projects, total = await self._repository.list_active(
-            page=pagination.page,
-            page_size=pagination.page_size,
-        )
+    async def list_projects(self, pagination: PaginationParams) -> ProjectListResponse:
+        projects, total = await self._repository.list_active(pagination.to_offset())
         return ProjectListResponse.build(
             items=[ProjectRead.from_db(project) for project in projects],
             total=total,

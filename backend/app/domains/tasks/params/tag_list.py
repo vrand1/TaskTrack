@@ -1,14 +1,10 @@
 import uuid
 from dataclasses import dataclass
 
+from app.shared.query.pagination import OffsetPagination
 
-@dataclass(frozen=True, slots=True)
-class TagListParams:
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class TagListParams(OffsetPagination):
     q: str | None = None
     project_id: uuid.UUID | None = None
-    page: int = 1
-    page_size: int = 20
-
-    @property
-    def offset(self) -> int:
-        return (self.page - 1) * self.page_size

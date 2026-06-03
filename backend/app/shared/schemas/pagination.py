@@ -3,7 +3,22 @@ from typing import Any, Self
 
 from pydantic import Field
 
+from app.core.config import settings
+from app.shared.query.pagination import OffsetPagination
 from app.shared.schemas.base import APIModel
+
+
+class PaginationParams(APIModel):
+    page: int = Field(default=1, ge=1, description="Номер страницы (начиная с 1).")
+    page_size: int = Field(
+        default=settings.default_page_size,
+        ge=1,
+        le=settings.max_page_size,
+        description="Размер страницы (количество элементов).",
+    )
+
+    def to_offset(self) -> OffsetPagination:
+        return OffsetPagination(page=self.page, page_size=self.page_size)
 
 
 class PaginatedResponse(APIModel):

@@ -5,18 +5,15 @@ from fastapi import APIRouter, Depends
 from app.domains.auth.dependencies import CurrentUserDep
 from app.domains.tasks.api.dependencies import TaskServiceDep
 from app.domains.tasks.params.tag_list import TagListParams
-from app.domains.tasks.schemas import (
-    TagFilterParams,
-    TagListResponse,
-    TaskPaginationParams,
-)
+from app.domains.tasks.schemas import TagFilterParams, TagListResponse
+from app.shared.schemas.pagination import PaginationParams
 
 router = APIRouter(prefix="/tags", tags=["tags"])
 
 
 def tag_list_query_params(
     filters: Annotated[TagFilterParams, Depends()],
-    pagination: Annotated[TaskPaginationParams, Depends()],
+    pagination: Annotated[PaginationParams, Depends()],
 ) -> TagListParams:
     return filters.to_list_params(pagination)
 

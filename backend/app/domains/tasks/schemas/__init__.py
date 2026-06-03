@@ -1,11 +1,9 @@
-﻿import math
-import uuid
+﻿import uuid
 from datetime import datetime
 from typing import Annotated, Any, Literal, Self
 
 from pydantic import ConfigDict, Field, StringConstraints, field_validator, model_validator
 
-from app.core.config import settings
 from app.domains.tasks.domain.constants import DEFAULT_TASK_PRIORITY
 from app.domains.tasks.domain.refs import TaskRefRegistry
 from app.domains.tasks.models import Task
@@ -17,6 +15,7 @@ from app.domains.tasks.params.history import TaskHistoryListParams
 from app.domains.tasks.params.list import TaskListParams
 from app.domains.tasks.params.tag_list import TagListParams
 from app.shared.schemas.base import APIModel
+from app.shared.schemas.pagination import PaginatedResponse, PaginationParams
 from app.shared.schemas.types import (
     AssigneeEmailStr,
     DescriptionStr,
@@ -113,16 +112,6 @@ class TaskStatusUpdate(APIModel):
     )
 
 
-class TaskPaginationParams(APIModel):
-    page: int = Field(default=1, ge=1, description="Номер страницы (начиная с 1).")
-    page_size: int = Field(
-        default=settings.tasks_default_page_size,
-        ge=1,
-        le=settings.tasks_max_page_size,
-        description="Размер страницы (количество элементов).",
-    )
-
-
 class TaskFilterParams(APIModel):
     project_id: uuid.UUID | None = Field(default=None)
     parent_task_id: uuid.UUID | None = Field(
@@ -153,7 +142,7 @@ class TaskFilterParams(APIModel):
         description="Направление сортировки.",
     )
 
-    def to_list_params(self, pagination: TaskPaginationParams) -> TaskListParams:
+    def to_list_params(self, pagination: PaginationParams) -> TaskListParams:
         return TaskListParams(
             project_id=self.project_id,
             parent_task_id=self.parent_task_id,
@@ -217,31 +206,6 @@ class TaskRead(APIModel):
         )
 
 
-class PaginatedResponse(APIModel):
-    total: int = Field(ge=0)
-    page: int = Field(ge=1)
-    page_size: int = Field(ge=1)
-    pages: int = Field(ge=0)
-
-    @classmethod
-    def build(
-        cls,
-        *,
-        items: list[Any],
-        total: int,
-        page: int,
-        page_size: int,
-    ) -> Self:
-        pages = math.ceil(total / page_size) if total else 0
-        return cls(
-            items=items,
-            total=total,
-            page=page,
-            page_size=page_size,
-            pages=pages,
-        )
-
-
 class TaskListResponse(PaginatedResponse):
     items: list[TaskRead]
 
@@ -265,7 +229,7 @@ class TaskHistoryFilterParams(APIModel):
     def to_list_params(
         self,
         task_id: uuid.UUID,
-        pagination: TaskPaginationParams,
+        pagination: PaginationParams,
     ) -> TaskHistoryListParams:
         return TaskHistoryListParams(
             task_id=task_id,
@@ -342,7 +306,7 @@ class TaskCommentFilterParams(APIModel):
     def to_list_params(
         self,
         task_id: uuid.UUID,
-        pagination: TaskPaginationParams,
+        pagination: PaginationParams,
     ) -> TaskCommentListParams:
         return TaskCommentListParams(
             task_id=task_id,
@@ -376,7 +340,7 @@ class TagFilterParams(APIModel):
         description="Если указан — только теги, используемые в активных задачах проекта.",
     )
 
-    def to_list_params(self, pagination: TaskPaginationParams) -> TagListParams:
+    def to_list_params(self, pagination: PaginationParams) -> TagListParams:
         return TagListParams(
             q=self.q.strip() if self.q else None,
             project_id=self.project_id,

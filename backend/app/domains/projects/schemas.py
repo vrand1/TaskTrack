@@ -4,7 +4,6 @@ from typing import Self
 
 from pydantic import Field, field_validator, model_validator
 
-from app.core.config import settings
 from app.domains.projects.model import Project
 from app.shared.schemas.base import APIModel
 from app.shared.schemas.pagination import PaginatedResponse
@@ -59,15 +58,6 @@ class ProjectRead(APIModel):
             created_at=project.created_at,
             updated_at=project.updated_at,
         )
-
-
-class ProjectPaginationParams(APIModel):
-    page: int = Field(default=1, ge=1)
-    page_size: int = Field(
-        default=settings.tasks_default_page_size,
-        ge=1,
-        le=settings.tasks_max_page_size,
-    )
 
 
 class ProjectListResponse(PaginatedResponse):
