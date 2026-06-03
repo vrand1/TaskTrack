@@ -55,7 +55,8 @@ class ProjectService:
             if slug_raw is not None: 
                 slug = slugify(slug_raw)
                 if await self._repository.slug_exists(slug, exclude_id=project.id):
-                    raise ProjectSlugTakenError(slug) # Есть ограничение на уровне модели, да. Здесь для понятной ошибки
+                    raise ProjectSlugTakenError(slug) # Есть ограничение на уровне модели, да.
+                                                      # Здесь для понятной ошибки
                 project.slug = slug
 
         for field, value in updates.items():
