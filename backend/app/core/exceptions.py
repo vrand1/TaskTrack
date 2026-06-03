@@ -66,6 +66,18 @@ class ProjectNotFoundError(AppError):
         )
 
 
+class InvalidProjectSlugError(AppError):
+    def __init__(self) -> None:
+        super().__init__(
+            code="INVALID_PROJECT_SLUG",
+            message=(
+                "Нельзя построить slug: используйте латиницу, цифры, дефис "
+                "(или укажите поле slug явно)."
+            ),
+            status_code=422,
+        )
+
+
 class ProjectSlugTakenError(AppError):
     def __init__(self, slug: str) -> None:
         super().__init__(

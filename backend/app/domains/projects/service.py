@@ -1,6 +1,6 @@
 import uuid
 
-from app.core.exceptions import ProjectSlugTakenError
+from app.core.exceptions import InvalidProjectSlugError, ProjectSlugTakenError
 from app.domains.projects.model import Project
 from app.domains.projects.repository import ProjectRepository
 from app.domains.projects.schemas import (
@@ -9,9 +9,9 @@ from app.domains.projects.schemas import (
     ProjectRead,
     ProjectUpdate,
 )
-from app.domains.projects.utils import slugify
 from app.domains.users.model import User
 from app.shared.schemas.pagination import PaginationParams
+from app.shared.utils.slugify import slugify
 
 
 class ProjectService:
@@ -19,10 +19,7 @@ class ProjectService:
         self._repository = repository
 
     async def create(self, data: ProjectCreate, *, actor: User) -> Project:
-        slug = slugify(data.slug or data.name)
-        if await self._repository.slug_exists(slug):
-            raise ProjectSlugTakenError(slug)
-
+        slug = await self._resolve_slug(data.slug or data.name)
         project = Project(
             slug=slug,
             name=data.name,
@@ -49,12 +46,8 @@ class ProjectService:
 
         if "slug" in updates:
             slug_raw = updates.pop("slug")
-            if slug_raw is not None: 
-                slug = slugify(slug_raw)
-                if await self._repository.slug_exists(slug, exclude_id=project.id):
-                    raise ProjectSlugTakenError(slug) # Есть ограничение на уровне модели, да.
-                                                      # Здесь для понятной ошибки
-                project.slug = slug
+            if slug_raw is not None:
+                project.slug = await self._resolve_slug(slug_raw, exclude_id=project.id)
 
         for field, value in updates.items():
             setattr(project, field, value)
@@ -68,3 +61,16 @@ class ProjectService:
     async def restore(self, project_id: uuid.UUID) -> Project:
         project = await self._repository.get_restorable(project_id)
         return await self._repository.restore(project)
+
+    async def _resolve_slug(
+        self,
+        raw: str,
+        *,
+        exclude_id: uuid.UUID | None = None,
+    ) -> str:
+        slug = slugify(raw)
+        if not slug:
+            raise InvalidProjectSlugError()
+        if await self._repository.slug_exists(slug, exclude_id=exclude_id):
+            raise ProjectSlugTakenError(slug)
+        return slug

@@ -47,3 +47,17 @@ async def test_list_projects(
     assert data["items"][0]["id"] == project_id
 
     await client.delete(f"/api/v1/projects/{project_id}", headers=auth_headers)
+
+
+@pytest.mark.asyncio
+async def test_create_project_rejects_empty_slug_from_name(
+    client: AsyncClient,
+    auth_headers: dict[str, str],
+) -> None:
+    response = await client.post(
+        "/api/v1/projects",
+        json={"name": "Только кириллица"},
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "INVALID_PROJECT_SLUG"
