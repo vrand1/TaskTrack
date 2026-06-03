@@ -20,6 +20,8 @@ from app.domains.tasks.models import Task, TaskComment
 from app.domains.tasks.refs import TaskRefRegistry
 from app.domains.tasks.repository import TaskRepository
 from app.domains.tasks.schemas import (
+    TagListResponse,
+    TagRead,
     TaskCommentCreate,
     TaskCommentListResponse,
     TaskCommentRead,
@@ -30,6 +32,7 @@ from app.domains.tasks.schemas import (
     TaskRead,
     TaskUpdate,
 )
+from app.domains.tasks.tag_list_params import TagListParams
 from app.domains.users.model import User
 from app.domains.users.ports import UserStore
 from app.realtime.contracts import (
@@ -195,6 +198,18 @@ class TaskService:
         )
         await self._cache.set(params, response)
         return response
+
+    async def list_tags(self, params: TagListParams) -> TagListResponse:
+        if params.project_id is not None:
+            await self._projects.get_active_by_id(params.project_id)
+
+        tags, total = await self._repository.list_tags(params)
+        return TagListResponse.build(
+            items=[TagRead.from_db(tag) for tag in tags],
+            total=total,
+            page=params.page,
+            page_size=params.page_size,
+        )
 
     async def update(self, task_id: uuid.UUID, data: TaskUpdate, *, actor: User) -> TaskRead:
         task = await self._repository.get_active_by_id(task_id)

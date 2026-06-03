@@ -12,6 +12,7 @@ from app.domains.projects.model import Project
 from app.domains.tasks.list_params import TaskListParams
 from app.domains.tasks.models import Tag, Task, TaskTag
 from app.domains.tasks.refs import TaskRefRegistry
+from app.domains.tasks.tag_list_params import TagListParams
 from app.domains.users.model import User
 
 TASK_LOAD = (
@@ -131,6 +132,36 @@ class TaskRepository:
         )
         tasks, _ = await self.list_active(params)
         return tasks
+
+    async def list_tags(self, params: TagListParams) -> tuple[list[Tag], int]:
+        query = select(Tag)
+        count_query = select(func.count()).select_from(Tag)
+
+        if params.q:
+            escaped = params.q.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            pattern = f"%{escaped}%"
+            query = query.where(Tag.name.ilike(pattern, escape="\\"))
+            count_query = count_query.where(Tag.name.ilike(pattern, escape="\\"))
+
+        if params.project_id is not None:
+            tag_ids = (
+                select(Tag.id)
+                .join(TaskTag, TaskTag.tag_id == Tag.id)
+                .join(Task, Task.id == TaskTag.task_id)
+                .where(
+                    Task.project_id == params.project_id,
+                    Task.deleted_at.is_(None),
+                )
+                .distinct()
+            )
+            query = query.where(Tag.id.in_(tag_ids))
+            count_query = count_query.where(Tag.id.in_(tag_ids))
+
+        query = query.order_by(Tag.name.asc()).offset(params.offset).limit(params.page_size)
+
+        total = await self._session.scalar(count_query) or 0
+        result = await self._session.scalars(query)
+        return list(result.all()), total
 
     async def save(self, task: Task) -> Task:
         task.updated_at = datetime.now(UTC)

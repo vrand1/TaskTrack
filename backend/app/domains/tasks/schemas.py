@@ -13,7 +13,9 @@ from app.domains.tasks.list_params import TaskListParams
 from app.domains.tasks.models import Task
 from app.domains.tasks.models.comment import TaskComment
 from app.domains.tasks.models.event import TaskEvent
+from app.domains.tasks.models.tag import Tag
 from app.domains.tasks.refs import TaskRefRegistry
+from app.domains.tasks.tag_list_params import TagListParams
 from app.shared.schemas.base import APIModel
 from app.shared.schemas.types import (
     AssigneeEmailStr,
@@ -352,6 +354,39 @@ class TaskCommentFilterParams(APIModel):
 
 class TaskCommentListResponse(PaginatedResponse):
     items: list[TaskCommentRead]
+
+
+class TagRead(APIModel):
+    id: int
+    name: str
+
+    @classmethod
+    def from_db(cls, tag: Tag) -> Self:
+        return cls(id=tag.id, name=tag.name)
+
+
+class TagFilterParams(APIModel):
+    q: str | None = Field(
+        default=None,
+        max_length=64,
+        description="Подстрока поиска по имени тега (без учёта регистра).",
+    )
+    project_id: uuid.UUID | None = Field(
+        default=None,
+        description="Если указан — только теги, используемые в активных задачах проекта.",
+    )
+
+    def to_list_params(self, pagination: TaskPaginationParams) -> TagListParams:
+        return TagListParams(
+            q=self.q.strip() if self.q else None,
+            project_id=self.project_id,
+            page=pagination.page,
+            page_size=pagination.page_size,
+        )
+
+
+class TagListResponse(PaginatedResponse):
+    items: list[TagRead]
 
 
 TaskRead.model_rebuild()
