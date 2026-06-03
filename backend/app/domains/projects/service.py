@@ -50,16 +50,16 @@ class ProjectService:
         project = await self._repository.get_active_by_id(project_id)
         updates = data.model_dump(exclude_unset=True)
 
-        if "slug" in updates and updates["slug"] is not None:
-            slug = slugify(updates["slug"])
-            if await self._repository.slug_exists(slug, exclude_id=project.id):
-                raise ProjectSlugTakenError(slug)
-            project.slug = slug
+        if "slug" in updates:
+            slug_raw = updates.pop("slug")
+            if slug_raw is not None: 
+                slug = slugify(slug_raw)
+                if await self._repository.slug_exists(slug, exclude_id=project.id):
+                    raise ProjectSlugTakenError(slug) # Есть ограничение на уровне модели, да. Здесь для понятной ошибки
+                project.slug = slug
 
-        if "name" in updates:
-            project.name = updates["name"]
-        if "description" in updates:
-            project.description = updates["description"]
+        for field, value in updates.items():
+            setattr(project, field, value)
 
         return await self._repository.save(project)
 
