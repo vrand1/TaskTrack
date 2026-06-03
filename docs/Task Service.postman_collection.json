@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "8ce43f0f-a8e4-433f-a331-f4e5a5c0b74d",
     "name": "Task Service",
-    "description": "Ручное тестирование REST API Task Service.\n\n**Базовый URL (dev через nginx):** `{{baseUrl}}`\n**Прямой доступ к API (без nginx):** `{{baseUrlDirect}}`\n**WebSocket:** см. папку **Realtime (WebSocket)** — подключение только через **New → WebSocket**, не через HTTP-запросы.\n\n**Порядок smoke-проверки:**\n1. System → Health\n2. Auth → Login (save token)\n3. Projects → Create Project\n4. Tasks → Create Task → … → Reopen Task (сначала перевести в `done`)\n\nDev-пользователи после `migrate`: `admin@example.dev` / `user@example.dev`, пароль `password123`.",
+    "description": "Ручное тестирование REST API Task Service.\n\n**Базовый URL (dev через nginx):** `{{baseUrl}}`\n**Прямой доступ к API (без nginx):** `{{baseUrlDirect}}`\n**WebSocket:** см. папку **Realtime (WebSocket)** — подключение только через **New → WebSocket**, не через HTTP-запросы.\n\n**Порядок smoke-проверки:**\n1. System → Health\n2. Auth → Login (save token)\n3. Projects → Create Project\n4. Tasks → Create Task → Tags → List Tags\n5. Tasks → … → Reopen Task (сначала перевести в `done`)\n\nDev-пользователи после `migrate`: `admin@example.dev` / `user@example.dev`, пароль `password123`.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -721,6 +721,196 @@
               }
             ],
             "url": "{{baseUrl}}/tasks/{{taskId}}/restore"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tags",
+      "item": [
+        {
+          "name": "List Tags",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const data = pm.response.json();",
+                  "pm.test('Response has paginated items', function () {",
+                  "    pm.expect(data).to.have.property('items');",
+                  "    pm.expect(data).to.have.property('total');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tags?page=1&page_size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tags"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Список всех тегов в системе. Теги создаются автоматически при POST/PATCH задачи с полем `tags`."
+          }
+        },
+        {
+          "name": "List Tags (search)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tags?q=postman&page=1&page_size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tags"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "postman",
+                  "description": "Подстрока в имени тега (без учёта регистра)"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Tags (by project)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tags?project_id={{projectId}}&page=1&page_size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tags"
+              ],
+              "query": [
+                {
+                  "key": "project_id",
+                  "value": "{{projectId}}",
+                  "description": "Только теги активных задач указанного проекта"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Task Tags",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const data = pm.response.json();",
+                  "pm.test('Tags updated', function () {",
+                  "    pm.expect(data.tags).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tags\": [\"postman\", \"smoke\", \"updated\"]\n}"
+            },
+            "url": "{{baseUrl}}/tasks/{{taskId}}",
+            "description": "Полная замена набора тегов задачи. Новые имена создаются автоматически. `\"tags\": []` — очистить все теги."
+          }
+        },
+        {
+          "name": "Clear Task Tags",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tags\": []\n}"
+            },
+            "url": "{{baseUrl}}/tasks/{{taskId}}",
+            "description": "Снять все теги с задачи."
           }
         }
       ]
