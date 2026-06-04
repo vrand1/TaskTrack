@@ -66,8 +66,10 @@ class Task(Base):
             sqlite_where=PURGE_ROW,
         ),
     )
-
-    id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    # UUID не особо оправдан, я просто хотел с ним поработать. Опыта не было, а очень хотелось
+    # Как для микросервиса решение окей, глобальная уникальность во всей ИС, но оверинжиниринг бтв
+    # в рамках этого задания мини прод сервиса
+    id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4) # type: ignore[assignment]
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     assignee_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)

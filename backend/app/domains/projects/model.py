@@ -29,7 +29,9 @@ class Project(Base):
             sqlite_where=PURGE_ROW,
         ),
     )
-
+    # UUID не особо оправдан, я просто хотел с ним поработать. Опыта не было, а очень хотелось
+    # Как для микросервиса решение окей, глобальная уникальность во всей ИС, но оверинжиниринг бтв
+    # в рамках этого задания мини прод сервиса  
     id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     slug: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
