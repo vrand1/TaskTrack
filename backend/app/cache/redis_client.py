@@ -2,7 +2,12 @@ from redis.asyncio import Redis
 
 from app.core.config import settings
 
-_redis: Redis | None = None
+# Да, Singleton, вроде бы антипаттерн, но это буквально инстанс для кеша
+# От него не зависит истинность данных/процессов, и он не зависит от других сервисов
+# И проблемы с ним могут возникнуть только из-за ошибок окружения (сервер, контейнер etc)
+# а не из-за ошибок доменной логики 
+
+_redis: Redis | None = None 
 
 
 async def init_redis() -> None:
