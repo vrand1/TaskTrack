@@ -20,15 +20,17 @@ DescriptionStr = Annotated[
 ]
 
 
+# Валидация по constants, не по живому справочнику из БД — см. domains/tasks/domain/constants.py.
 def _validate_task_status(value: str) -> str:
-    if value not in TASK_STATUSES:
+    if value not in TASK_STATUSES: # TODO вынести в динамику
         allowed = ", ".join(TASK_STATUSES)
         raise ValueError(f"Некорректный статус '{value}'. Допустимые значения: {allowed}")
     return value
 
 
+# Аналогично статусам: приоритеты в API синхронизированы через constants.
 def _validate_task_priority(value: str) -> str:
-    if value not in TASK_PRIORITIES:
+    if value not in TASK_PRIORITIES: # TODO вынести в динамику
         allowed = ", ".join(TASK_PRIORITIES)
         raise ValueError(f"Некорректный приоритет '{value}'. Допустимые значения: {allowed}")
     return value

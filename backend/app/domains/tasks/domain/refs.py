@@ -18,6 +18,11 @@ class PriorityRef:
     code: str
 
 
+# Реестр загружается из БД при старте (init_task_ref_registry). Порядок FSM — по sort_order.
+# Контракт REST пока ограничен constants.TASK_STATUSES;
+# БД — задел под расширение workflow без смены FK.
+# Также можно кэшировать список в Redis (загрузка из таблицы при старте, TTL ~60)
+# для скорости при нескольких репликах API.
 class TaskRefRegistry:
     def __init__(
         self,

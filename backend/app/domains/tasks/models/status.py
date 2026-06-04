@@ -4,6 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.db.base import Base
 
 
+# Справочник статусов в БД; переходы задаются sort_order и TaskRefRegistry + FSM.
 class TaskStatusRef(Base):
     __tablename__ = "task_statuses"
 
